@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de IMC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="wrapper">
+
+    <div class="header">
+      <div class="tag">Saude &amp; Bem-estar</div>
+      <h1>CALCULADORA<br><span>DE IMC</span></h1>
+      <p>Indice de Massa Corporal<br>Calcule e descubra sua faixa de saude.</p>
+    </div>
+
+    <div class="card">
+
+      <div class="field">
+        <label>Nome completo</label>
+        <div class="input-wrap">
+          <input type="text" id="nome" placeholder="Digite seu nome" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Peso</label>
+          <div class="input-wrap">
+            <input type="number" id="peso" placeholder="Digite seu peso" min="1" />
+            <span class="unit">kg</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Altura</label>
+          <div class="input-wrap">
+            <input type="number" id="altura" placeholder="Digite sua altura" step="0.01" min="0.5" max="2.5" />
+            <span class="unit">m</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Idade</label>
+        <div class="input-wrap">
+          <input type="number" id="idade" placeholder="Digite sua idade" min="1" max="120" />
+          <span class="unit">anos</span>
+        </div>
+      </div>
+
+      <p class="hint" id="hint">Preencha todos os campos para calcular</p>
+
+      <div class="btn-row">
+        <button class="btn-calcular" onclick="calcular()">CALCULAR IMC</button>
+        <button class="btn-reset" onclick="resetar()">X</button>
+      </div>
+
+      <div class="result" id="result">
+        <div class="result-header">
+          <div class="imc-value" id="imcValor">-</div>
+          <div class="imc-label">IMC</div>
+        </div>
+
+        <div class="category-badge" id="categoriaBadge">
+          <span class="dot" id="categoriaDot"></span>
+          <span id="categoriaTexto">-</span>
+        </div>
+
+        <div class="imc-bar">
+          <div class="imc-needle" id="needle" style="left: 0%"></div>
+        </div>
+        <div class="bar-labels">
+          <span>Abaixo</span>
+          <span>Normal</span>
+          <span>Sobrepeso</span>
+          <span>Obeso</span>
+        </div>
+
+        <div class="person-info" id="personInfo"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
