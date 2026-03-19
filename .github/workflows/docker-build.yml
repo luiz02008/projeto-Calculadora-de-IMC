@@ -1,55 +1,70 @@
-name: Docker Build and Push
+name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [main, master]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [main, master]
+    branches: [ "main", "master" ]
+
+env:
+  # Docker image name must be lowercase
+  IMAGE_NAME: ghcr.io/luiz02008/projeto-calculadora-de-imc
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Set lowercase repository name
-        id: repo_lowercase
-        run: |
-          echo "repository_lowercase=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login no GitHub Container Registry
+      - name: Log in to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
+      - name: Build and push image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: |
-            ghcr.io/${{ steps.repo_lowercase.outputs.repository_lowercase }}:latest
-            ghcr.io/${{ steps.repo_lowercase.outputs.repository_lowercase }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build image (PR for testing)
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Image metadata
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         run: |
           echo "✓ Imagem construída e enviada com sucesso!"
-          echo "Tags: ghcr.io/${{ steps.repo_lowercase.outputs.repository_lowercase }}:latest"
+          echo "Tags: ${{ env.IMAGE_NAME }}:latest"
           echo ""
           echo "Para executar:"
-          echo "  docker pull ghcr.io/${{ steps.repo_lowercase.outputs.repository_lowercase }}:latest"
-          echo "  docker run -d -p 8080:80 ghcr.io/${{ steps.repo_lowercase.outputs.repository_lowercase }}:latest"
+          echo "  docker pull ${{ env.IMAGE_NAME }}:latest"
+          echo "  docker run -d -p 8080:80 ${{ env.IMAGE_NAME }}:latest"
           echo ""
           echo "Acesso: http://localhost:8080"
