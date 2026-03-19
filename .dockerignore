@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
+
+# Node modules (não temos, mas por segurança)
+node_modules
+
+# Arquivos de documentação
+README.md
+*.md
+
+# Arquivos de configuração local
+.dockerignore
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
